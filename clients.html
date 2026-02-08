@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Clients</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-shopping-cart me-2"></i>Gestion Commandes
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="clients.html">
+                            <i class="fas fa-users"></i> Clients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="produits.html">
+                            <i class="fas fa-box"></i> Produits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="achat.html">
+                            <i class="fas fa-shopping-bag"></i> Acheter
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="commandes.html">
+                            <i class="fas fa-file-invoice"></i> Commandes
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-users me-2"></i> Gestion des Clients</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">
+                <i class="fas fa-plus me-2"></i>Nouveau Client
+            </button>
+        </div>
+
+        <div id="notification-container"></div>
+
+        <!-- Tableau des clients -->
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Ville</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <!-- Les clients seront chargés ici par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajout Client -->
+    <div class="modal fade" id="addClientModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addClientForm">
+                        <div class="mb-3">
+                            <label class="form-label">Civilité</label>
+                            <select class="form-select" name="civilite" required>
+                                <option value="M.">M.</option>
+                                <option value="Mme">Mme</option>
+                                <option value="Mlle">Mlle</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom *</label>
+                                <input type="text" class="form-control" name="nom" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-control" name="prenom">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <input type="text" class="form-control" name="adresse">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Code Postal</label>
+                                <input type="text" class="form-control" name="codePostal">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Ville</label>
+                                <input type="text" class="form-control" name="ville">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pays</label>
+                            <input type="text" class="form-control" name="pays" value="France">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="addClient()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Modification Client -->
+    <div class="modal fade" id="editClientModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier le Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editClientForm">
+                        <input type="hidden" id="editClientId" name="numClient">
+                        <!-- Mêmes champs que le modal d'ajout -->
+                        <div class="mb-3">
+                            <label class="form-label">Civilité</label>
+                            <select class="form-select" id="editCivilite" name="civilite" required>
+                                <option value="M.">M.</option>
+                                <option value="Mme">Mme</option>
+                                <option value="Mlle">Mlle</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom *</label>
+                                <input type="text" class="form-control" id="editNom" name="nom" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="editPrenom" name="prenom">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="editAdresse" name="adresse">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Code Postal</label>
+                                <input type="text" class="form-control" id="editCodePostal" name="codePostal">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="editVille" name="ville">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pays</label>
+                            <input type="text" class="form-control" id="editPays" name="pays">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="updateClient()">Mettre à jour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/clients.js"></script>
+</body>
+</html>
