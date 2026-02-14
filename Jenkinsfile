@@ -34,8 +34,9 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     bat """
                         npx sonar-scanner ^
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} ^
-                        -Dsonar.host.url=${SONAR_HOST_URL} ^
+                        -Dsonar.projectKey=gestion-commande-frontend ^
+                        -Dsonar.host.url=http://192.168.1.6:9000 ^
+                        -Dsonar.login=%SONAR_TOKEN% ^
                         -Dsonar.sources=. ^
                         -Dsonar.exclusions=**/node_modules/**,**/*.test.js ^
                         -Dsonar.javascript.file.suffixes=.js
