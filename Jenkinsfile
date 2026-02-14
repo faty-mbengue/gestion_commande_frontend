@@ -20,11 +20,10 @@ pipeline {
         stage('Lint JavaScript') {
             steps {
                 script {
-                    // Installation ESLint si nécessaire
-                    sh '''
+                    bat '''
                         npm init -y
                         npm install eslint --save-dev
-                        npx eslint js/ --ext .js || true
+                        npx eslint js/ --ext .js || exit 0
                     '''
                 }
             }
@@ -33,12 +32,12 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh """
-                        npx sonar-scanner \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.host.url=${SONAR_HOST_URL} \
-                        -Dsonar.sources=. \
-                        -Dsonar.exclusions=**/node_modules/**,**/*.test.js \
+                    bat """
+                        npx sonar-scanner ^
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} ^
+                        -Dsonar.host.url=${SONAR_HOST_URL} ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.exclusions=**/node_modules/**,**/*.test.js ^
                         -Dsonar.javascript.file.suffixes=.js
                     """
                 }
@@ -56,7 +55,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh """
+                    bat """
                         docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
                         docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
                     """
@@ -72,8 +71,8 @@ pipeline {
                         usernameVariable: 'USER',
                         passwordVariable: 'PASS'
                     )]) {
-                        sh """
-                            echo \$PASS | docker login -u \$USER --password-stdin
+                        bat """
+                            echo %PASS% | docker login -u %USER% --password-stdin
                             docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
                             docker push ${DOCKER_IMAGE_NAME}:latest
                             docker logout
