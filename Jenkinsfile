@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat """
+                sh """
                     docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
                     docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
                 """
@@ -30,8 +30,8 @@ pipeline {
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    bat """
-                        echo %PASS% | docker login -u %USER% --password-stdin
+                    sh """
+                        echo $PASS | docker login -u $USER --password-stdin
                         docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
                         docker push ${DOCKER_IMAGE_NAME}:latest
                         docker logout
@@ -45,9 +45,7 @@ pipeline {
         success {
             echo """
             ✅ DEPLOYMENT SUCCESS !
-            Image publiée :
-            ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
-            ${DOCKER_IMAGE_NAME}:latest
+            Image: ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
             """
         }
         failure {
