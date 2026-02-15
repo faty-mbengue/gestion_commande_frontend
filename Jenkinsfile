@@ -4,13 +4,11 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = 'fatymbengue/gestion-commande-frontend'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-
-        // SonarQube (optionnel - analyse du JS)
         SONAR_PROJECT_KEY = 'gestion-commande-frontend'
-        SONAR_HOST_URL = 'http://192.168.1.6:9000'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -19,28 +17,23 @@ pipeline {
 
         stage('Lint JavaScript') {
             steps {
-                script {
-                    bat '''
-                        npm init -y
-                        npm install eslint --save-dev
-                        npx eslint js/ --ext .js || exit 0
-                    '''
-                }
+                bat '''
+                    npm install
+                    npx eslint js/ --ext .js || exit 0
+                '''
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat """
+                    bat '''
                         npx sonar-scanner ^
                         -Dsonar.projectKey=gestion-commande-frontend ^
-                        -Dsonar.host.url=http://192.168.1.5:9000 ^
-                        -Dsonar.login=%SONAR_TOKEN% ^
                         -Dsonar.sources=. ^
                         -Dsonar.exclusions=**/node_modules/**,**/*.test.js ^
                         -Dsonar.javascript.file.suffixes=.js
-                    """
+                    '''
                 }
             }
         }
@@ -55,30 +48,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    bat """
-                        docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
-                        docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
-                    """
-                }
+                bat """
+                    docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+                    docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
+                """
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'docker-hub-credentials',
-                        usernameVariable: 'USER',
-                        passwordVariable: 'PASS'
-                    )]) {
-                        bat """
-                            echo %PASS% | docker login -u %USER% --password-stdin
-                            docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
-                            docker push ${DOCKER_IMAGE_NAME}:latest
-                            docker logout
-                        """
-                    }
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    bat """
+                        echo %PASS% | docker login -u %USER% --password-stdin
+                        docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                        docker push ${DOCKER_IMAGE_NAME}:latest
+                        docker logout
+                    """
                 }
             }
         }
