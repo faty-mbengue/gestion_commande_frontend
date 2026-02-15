@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'agent-windows' }
 
     environment {
         DOCKER_IMAGE_NAME = 'fatymbengue/gestion-commande-frontend'
@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -16,10 +15,20 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                    docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
-                    docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
-                """
+                script {
+                    // Adaptation pour Windows ou Linux
+                    if (isUnix()) {
+                        sh """
+                            docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+                            docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
+                        """
+                    } else {
+                        bat """
+                            docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+                            docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
+                        """
+                    }
+                }
             }
         }
 
@@ -30,12 +39,23 @@ pipeline {
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    sh """
-                        echo $PASS | docker login -u $USER --password-stdin
-                        docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
-                        docker push ${DOCKER_IMAGE_NAME}:latest
-                        docker logout
-                    """
+                    script {
+                        if (isUnix()) {
+                            sh """
+                                echo \$PASS | docker login -u \$USER --password-stdin
+                                docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE_NAME}:latest
+                                docker logout
+                            """
+                        } else {
+                            bat """
+                                echo %PASS% | docker login -u %USER% --password-stdin
+                                docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE_NAME}:latest
+                                docker logout
+                            """
+                        }
+                    }
                 }
             }
         }
