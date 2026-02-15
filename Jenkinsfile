@@ -35,7 +35,7 @@ pipeline {
                     bat """
                         npx sonar-scanner ^
                         -Dsonar.projectKey=gestion-commande-frontend ^
-                        -Dsonar.host.url=http://192.168.1.6:9000 ^
+                        -Dsonar.host.url=http://192.168.1.5:9000 ^
                         -Dsonar.login=%SONAR_TOKEN% ^
                         -Dsonar.sources=. ^
                         -Dsonar.exclusions=**/node_modules/**,**/*.test.js ^
