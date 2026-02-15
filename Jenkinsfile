@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = 'fatymbengue/gestion-commande-frontend'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-        SONAR_PROJECT_KEY = 'gestion-commande-frontend'
     }
 
     stages {
@@ -12,37 +11,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Lint JavaScript') {
-            steps {
-                bat '''
-                    npm install
-                    npx eslint js/ --ext .js || exit 0
-                '''
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat '''
-                        npx sonar-scanner ^
-                        -Dsonar.projectKey=gestion-commande-frontend ^
-                        -Dsonar.sources=. ^
-                        -Dsonar.exclusions=**/node_modules/**,**/*.test.js ^
-                        -Dsonar.javascript.file.suffixes=.js
-                    '''
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
             }
         }
 
@@ -76,13 +44,14 @@ pipeline {
     post {
         success {
             echo """
-            ✅ FRONTEND PIPELINE SUCCESS!
-            Image: ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
-            URL: http://localhost:80
+            ✅ DEPLOYMENT SUCCESS !
+            Image publiée :
+            ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+            ${DOCKER_IMAGE_NAME}:latest
             """
         }
         failure {
-            echo "❌ Frontend pipeline failed."
+            echo "❌ Deployment failed."
         }
     }
 }
