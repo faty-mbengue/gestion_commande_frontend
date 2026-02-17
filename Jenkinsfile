@@ -7,7 +7,7 @@ pipeline {
 
         // Variables SonarQube
         SONAR_PROJECT_KEY = 'gestion-commande-frontend'
-        SONAR_HOST_URL = 'http://10.156.59.234:9000'  // À ajuster si IP change
+        SONAR_HOST_URL = 'http://'http://192.168.1.5:9000'  // À ajuster si IP change
     }
 
     stages {
