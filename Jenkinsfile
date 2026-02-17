@@ -7,7 +7,7 @@ pipeline {
 
         // Variables SonarQube
         SONAR_PROJECT_KEY = 'gestion-commande-frontend'
-        SONAR_HOST_URL = 'http://'http://192.168.1.5:9000'  // À ajuster si IP change
+        SONAR_HOST_URL = 'http://192.168.1.5:9000'  // ✅ Correction : une seule URL
     }
 
     stages {
@@ -55,7 +55,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: '0b645248-5ff1-4028-9402-f5c77efce425',  // ID existant
+                    credentialsId: '0b645248-5ff1-4028-9402-f5c77efce425',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
