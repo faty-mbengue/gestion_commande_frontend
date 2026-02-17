@@ -7,16 +7,14 @@ function showNotification(message, type = 'success') {
     notification.className = `alert alert-${type} alert-dismissible fade show notification`;
     notification.innerHTML = `
         ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
     `;
-    
-    const container = document.getElementById('notification-container') || document.body;
+
+    const container = document.getElementById('notification-container') ?? document.body;
     container.prepend(notification);
-    
+
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
+        notification.remove();
     }, 5000);
 }
 
@@ -138,13 +136,11 @@ async function addToPanier(clientId, produitId, quantite) {
         console.log('📡 Status:', response.status);
         console.log('📡 Headers:', response.headers.get('content-type'));
 
-        // Lisez d'abord le texte brut
         const rawText = await response.text();
         console.log('📦 Réponse brute (premiers 500 caractères):', rawText.substring(0, 500));
 
         let data;
 
-        // Essayez de parser le JSON
         try {
             data = JSON.parse(rawText);
             console.log('✅ JSON parsé avec succès:', data);
@@ -152,20 +148,17 @@ async function addToPanier(clientId, produitId, quantite) {
             console.error('❌ Erreur parsing JSON:', parseError.message);
             console.error('📄 Texte problématique:', rawText);
 
-            // Si c'est un problème de référence circulaire, essayez de nettoyer
             if (rawText.includes('"client":}}]}}]}}]}}')) {
                 console.warn('⚠️ Détection de référence circulaire dans la réponse');
 
-                // Retournez un objet simple pour éviter l'erreur
                 data = {
                     success: true,
                     message: 'Produit ajouté (réponse simplifiée due à référence circulaire)',
-                    clientId: clientId,
-                    produitId: produitId,
-                    quantite: quantite
+                    clientId,
+                    produitId,
+                    quantite
                 };
             } else {
-                // Autre erreur
                 throw new Error(`Réponse API invalide: ${rawText.substring(0, 100)}...`);
             }
         }
@@ -179,6 +172,7 @@ async function addToPanier(clientId, produitId, quantite) {
         throw error;
     }
 }
+
 async function getPanier(clientId) {
     try {
         console.log('🔍 Récupération panier pour client:', clientId);
@@ -206,23 +200,21 @@ async function getPanier(clientId) {
         } catch (parseError) {
             console.error('❌ Erreur parsing panier:', parseError);
 
-            // Retournez un panier vide pour éviter l'erreur
             return {
                 id: null,
                 client: { numClient: clientId },
                 lignesPanier: [],
-                total: 0.0
+                total: 0
             };
         }
 
     } catch (error) {
         console.error('❌ Erreur getPanier:', error);
-        // Retournez un panier vide plutôt que null
         return {
             id: null,
             client: { numClient: clientId },
             lignesPanier: [],
-            total: 0.0
+            total: 0
         };
     }
 }
@@ -269,27 +261,27 @@ async function getCommandes() {
 }
 
 // Export des fonctions
-window.api = {
+globalThis.api = {
     // Clients
     getClients,
     createClient,
     updateClient,
     deleteClient,
-    
+
     // Produits
     getProduits,
     createProduit,
-    
+
     // Achat
     getProduitsAchat,
     addToPanier,
     getPanier,
     createCommande,
     finaliserCommande,
-    
+
     // Commandes
     getCommandes,
-    
+
     // Utilitaires
     showNotification
 };

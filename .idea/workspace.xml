@@ -9,10 +9,10 @@
       <change beforePath="$PROJECT_DIR$/../gestion-commande-deployment/Jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion-commande-deployment/Jenkinsfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gestion-commande-deployment/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion-commande-deployment/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gestion_commande" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion_commande" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/Jenkinsfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/achat.html" beforeDir="false" afterPath="$PROJECT_DIR$/achat.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clients.html" beforeDir="false" afterPath="$PROJECT_DIR$/clients.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/achat.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/achat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/api.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/clients.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/clients.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

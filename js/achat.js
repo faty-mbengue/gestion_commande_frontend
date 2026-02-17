@@ -3,7 +3,7 @@ let selectedProduitId = null;
 
 // Charger les clients dans le select
 async function loadClientsSelect() {
-    const clients = await window.api.getClients();
+    const clients = await globalThis.api.getClients();
     const select = document.getElementById('clientSelect');
     select.innerHTML = '<option value="">-- Sélectionnez un client --</option>';
 
@@ -29,7 +29,7 @@ async function loadClientsSelect() {
 
 // Charger les produits
 async function loadProduits() {
-    const produits = await window.api.getProduitsAchat();
+    const produits = await globalThis.api.getProduitsAchat();
     const container = document.getElementById('produitsContainer');
 
     if (produits.length === 0) {
@@ -72,7 +72,7 @@ async function loadProduits() {
 // Ouvrir le modal pour choisir la quantité
 function openQuantiteModal(produitId, produitNom, prixTTC) {
     if (!selectedClientId) {
-        window.api.showNotification('Veuillez d\'abord sélectionner un client', 'warning');
+        globalThis.api.showNotification('Veuillez d\'abord sélectionner un client', 'warning');
         return;
     }
 
@@ -104,8 +104,8 @@ async function addToPanier() {
     }
 
     try {
-        await window.api.addToPanier(selectedClientId, selectedProduitId, quantite);
-        document.getElementById('quantiteModal').querySelector('.btn-close').click();
+        await globalThis.api.addToPanier(selectedClientId, selectedProduitId, quantite);
+        document.getElementById('quantiteModal').querySelector('.btn-close')?.click();
         await loadPanier();
     } catch (error) {
         console.error('Erreur:', error);
@@ -116,7 +116,7 @@ async function addToPanier() {
 async function loadPanier() {
     if (!selectedClientId) return;
 
-    const panier = await window.api.getPanier(selectedClientId);
+    const panier = await globalThis.api.getPanier(selectedClientId);
     const container = document.getElementById('panierContainer');
 
     if (!panier || !panier.lignesPanier || panier.lignesPanier.length === 0) {
@@ -190,13 +190,13 @@ function updateCommandeContainer(total) {
 // Créer une commande
 async function createCommande() {
     if (!selectedClientId) {
-        window.api.showNotification('Veuillez sélectionner un client', 'warning');
+        globalThis.api.showNotification('Veuillez sélectionner un client', 'warning');
         return;
     }
 
     try {
-        const commande = await window.api.createCommande(selectedClientId);
-        window.api.showNotification(`Commande #${commande.numCommande} créée avec succès !`);
+        const commande = await globalThis.api.createCommande(selectedClientId);
+        globalThis.api.showNotification(`Commande #${commande.numCommande} créée avec succès !`);
 
         // Réinitialiser l'interface
         document.getElementById('clientSelect').value = '';

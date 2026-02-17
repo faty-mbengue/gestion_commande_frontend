@@ -1,7 +1,9 @@
 // Charger et afficher les clients
 async function loadClients() {
-    const clients = await window.api.getClients();
+    const clients = await (globalThis.api?.getClients() ?? Promise.resolve([]));
     const tbody = document.getElementById('clientsTableBody');
+    if (!tbody) return;
+
     tbody.innerHTML = '';
 
     if (clients.length === 0) {
@@ -21,15 +23,15 @@ async function loadClients() {
         row.innerHTML = `
             <td>${client.numClient}</td>
             <td>${client.nom}</td>
-            <td>${client.prenom || '-'}</td>
-            <td>${client.email || '-'}</td>
-            <td>${client.telephone || '-'}</td>
-            <td>${client.ville || '-'}</td>
+            <td>${client.prenom ?? '-'}</td>
+            <td>${client.email ?? '-'}</td>
+            <td>${client.telephone ?? '-'}</td>
+            <td>${client.ville ?? '-'}</td>
             <td>
                 <button class="btn btn-sm btn-outline-primary me-2" onclick="editClient(${client.numClient})">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(${client.numClient}, '${client.nom} ${client.prenom}')">
+                <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(${client.numClient}, '${client.nom} ${client.prenom ?? ''}')">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -41,6 +43,8 @@ async function loadClients() {
 // Ajouter un client
 async function addClient() {
     const form = document.getElementById('addClientForm');
+    if (!form) return;
+
     const formData = new FormData(form);
 
     const clientData = {
@@ -54,9 +58,11 @@ async function addClient() {
     };
 
     try {
-        await window.api.createClient(clientData);
+        await globalThis.api?.createClient(clientData);
         form.reset();
-        document.getElementById('addClientModal').querySelector('.btn-close').click();
+        document.getElementById('addClientModal')
+            ?.querySelector('.btn-close')
+            ?.click();
         await loadClients();
     } catch (error) {
         console.error('Erreur:', error);
@@ -65,18 +71,25 @@ async function addClient() {
 
 // Préparer l'édition d'un client
 async function editClient(clientId) {
-    const clients = await window.api.getClients();
+    const clients = await (globalThis.api?.getClients() ?? Promise.resolve([]));
     const client = clients.find(c => c.numClient === clientId);
 
     if (client) {
-        document.getElementById('editClientId').value = client.numClient;
-        document.getElementById('editCivilite').value = client.civilite || 'M.';
-        document.getElementById('editNom').value = client.nom;
-        document.getElementById('editPrenom').value = client.prenom || '';
-        document.getElementById('editAdresse').value = client.adresse || '';
-        document.getElementById('editCodePostal').value = client.codePostal || '';
-        document.getElementById('editVille').value = client.ville || '';
-        document.getElementById('editPays').value = client.pays || 'France';
+        const fields = {
+            editClientId: client.numClient,
+            editCivilite: client.civilite ?? 'M.',
+            editNom: client.nom,
+            editPrenom: client.prenom ?? '',
+            editAdresse: client.adresse ?? '',
+            editCodePostal: client.codePostal ?? '',
+            editVille: client.ville ?? '',
+            editPays: client.pays ?? 'France'
+        };
+
+        Object.entries(fields).forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        });
 
         const modal = new bootstrap.Modal(document.getElementById('editClientModal'));
         modal.show();
@@ -85,8 +98,10 @@ async function editClient(clientId) {
 
 // Mettre à jour un client
 async function updateClient() {
-    const clientId = document.getElementById('editClientId').value;
+    const clientId = document.getElementById('editClientId')?.value;
     const form = document.getElementById('editClientForm');
+    if (!clientId || !form) return;
+
     const formData = new FormData(form);
 
     const clientData = {
@@ -101,8 +116,10 @@ async function updateClient() {
     };
 
     try {
-        await window.api.updateClient(clientId, clientData);
-        document.getElementById('editClientModal').querySelector('.btn-close').click();
+        await globalThis.api?.updateClient(clientId, clientData);
+        document.getElementById('editClientModal')
+            ?.querySelector('.btn-close')
+            ?.click();
         await loadClients();
     } catch (error) {
         console.error('Erreur:', error);
@@ -119,7 +136,7 @@ function confirmDelete(clientId, clientName) {
 // Supprimer un client
 async function deleteClient(clientId) {
     try {
-        await window.api.deleteClient(clientId);
+        await globalThis.api?.deleteClient(clientId);
         await loadClients();
     } catch (error) {
         console.error('Erreur:', error);
