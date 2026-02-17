@@ -6,21 +6,21 @@ async function loadClientsSelect() {
     const clients = await window.api.getClients();
     const select = document.getElementById('clientSelect');
     select.innerHTML = '<option value="">-- Sélectionnez un client --</option>';
-    
+
     clients.forEach(client => {
         const option = document.createElement('option');
         option.value = client.numClient;
         option.textContent = `${client.nom} ${client.prenom} (ID: ${client.numClient})`;
         select.appendChild(option);
     });
-    
+
     select.addEventListener('change', async function() {
         selectedClientId = this.value;
         if (selectedClientId) {
             await loadPanier();
             document.getElementById('createCommandeBtn').disabled = false;
         } else {
-            document.getElementById('panierContainer').innerHTML = 
+            document.getElementById('panierContainer').innerHTML =
                 '<p class="text-muted">Veuillez d\'abord sélectionner un client</p>';
             document.getElementById('createCommandeBtn').disabled = true;
         }
@@ -31,7 +31,7 @@ async function loadClientsSelect() {
 async function loadProduits() {
     const produits = await window.api.getProduitsAchat();
     const container = document.getElementById('produitsContainer');
-    
+
     if (produits.length === 0) {
         container.innerHTML = `
             <div class="col-12 text-center text-muted">
@@ -41,7 +41,7 @@ async function loadProduits() {
         `;
         return;
     }
-    
+
     container.innerHTML = '';
     produits.forEach(produit => {
         const col = document.createElement('div');
@@ -75,35 +75,36 @@ function openQuantiteModal(produitId, produitNom, prixTTC) {
         window.api.showNotification('Veuillez d\'abord sélectionner un client', 'warning');
         return;
     }
-    
+
     selectedProduitId = produitId;
     document.getElementById('produitNom').textContent = produitNom;
     document.getElementById('produitPrix').textContent = `${prixTTC.toFixed(2)} € TTC`;
     document.getElementById('quantiteInput').value = 1;
     updateTotalProduit();
-    
+
     const modal = new bootstrap.Modal(document.getElementById('quantiteModal'));
     modal.show();
 }
 
 // Mettre à jour le total dans le modal
 function updateTotalProduit() {
-    const quantite = document.getElementById('quantiteInput').value;
-    const prix = parseFloat(document.getElementById('produitPrix').textContent);
+    const quantite = Number.parseInt(document.getElementById('quantiteInput').value, 10);
+    const prixText = document.getElementById('produitPrix').textContent;
+    const prix = Number.parseFloat(prixText);
     const total = quantite * prix;
     document.getElementById('totalProduit').textContent = `Total: ${total.toFixed(2)} €`;
 }
 
 // Ajouter au panier
 async function addToPanier() {
-    const quantite = document.getElementById('quantiteInput').value;
-    
+    const quantite = Number.parseInt(document.getElementById('quantiteInput').value, 10);
+
     if (!selectedClientId || !selectedProduitId || quantite < 1) {
         return;
     }
-    
+
     try {
-        await window.api.addToPanier(selectedClientId, selectedProduitId, parseInt(quantite));
+        await window.api.addToPanier(selectedClientId, selectedProduitId, quantite);
         document.getElementById('quantiteModal').querySelector('.btn-close').click();
         await loadPanier();
     } catch (error) {
@@ -114,10 +115,10 @@ async function addToPanier() {
 // Charger le panier
 async function loadPanier() {
     if (!selectedClientId) return;
-    
+
     const panier = await window.api.getPanier(selectedClientId);
     const container = document.getElementById('panierContainer');
-    
+
     if (!panier || !panier.lignesPanier || panier.lignesPanier.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted">
@@ -128,7 +129,7 @@ async function loadPanier() {
         updateCommandeContainer(0);
         return;
     }
-    
+
     let html = `
         <div class="table-responsive">
             <table class="table">
@@ -142,12 +143,12 @@ async function loadPanier() {
                 </thead>
                 <tbody>
     `;
-    
+
     let totalPanier = 0;
     panier.lignesPanier.forEach(ligne => {
         const totalLigne = ligne.prixUnitaire * ligne.quantite;
         totalPanier += totalLigne;
-        
+
         html += `
             <tr>
                 <td>${ligne.produit.nom}</td>
@@ -157,7 +158,7 @@ async function loadPanier() {
             </tr>
         `;
     });
-    
+
     html += `
                 </tbody>
                 <tfoot>
@@ -169,7 +170,7 @@ async function loadPanier() {
             </table>
         </div>
     `;
-    
+
     container.innerHTML = html;
     updateCommandeContainer(totalPanier);
 }
@@ -192,17 +193,17 @@ async function createCommande() {
         window.api.showNotification('Veuillez sélectionner un client', 'warning');
         return;
     }
-    
+
     try {
         const commande = await window.api.createCommande(selectedClientId);
         window.api.showNotification(`Commande #${commande.numCommande} créée avec succès !`);
-        
+
         // Réinitialiser l'interface
         document.getElementById('clientSelect').value = '';
         selectedClientId = null;
-        document.getElementById('panierContainer').innerHTML = 
+        document.getElementById('panierContainer').innerHTML =
             '<p class="text-muted">Veuillez d\'abord sélectionner un client</p>';
-        document.getElementById('commandeContainer').innerHTML = 
+        document.getElementById('commandeContainer').innerHTML =
             '<p class="text-muted">Ajoutez des articles au panier pour continuer</p>';
         document.getElementById('createCommandeBtn').disabled = true;
     } catch (error) {
@@ -214,7 +215,7 @@ async function createCommande() {
 document.addEventListener('DOMContentLoaded', async function() {
     await loadClientsSelect();
     await loadProduits();
-    
+
     // Écouter les changements de quantité
     document.getElementById('quantiteInput').addEventListener('input', updateTotalProduit);
 });

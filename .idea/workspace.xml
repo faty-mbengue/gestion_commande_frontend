@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06a57d13-3be2-41a4-a7fc-9a13b7bfad2d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../gestion-commande-deployment/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gestion-commande-deployment/Jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion-commande-deployment/Jenkinsfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gestion-commande-deployment/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion-commande-deployment/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gestion_commande" beforeDir="false" afterPath="$PROJECT_DIR$/../gestion_commande" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/Jenkinsfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/achat.html" beforeDir="false" afterPath="$PROJECT_DIR$/achat.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clients.html" beforeDir="false" afterPath="$PROJECT_DIR$/clients.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/achat.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/achat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/clients.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/clients.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,7 +20,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -36,6 +42,19 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/faty/Desktop/DEVOPS/gestion_commande_frontend&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="gestion_commande_frontend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="gestion_commande_frontend" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="06a57d13-3be2-41a4-a7fc-9a13b7bfad2d" name="Changes" comment="" />

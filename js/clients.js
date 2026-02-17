@@ -42,7 +42,7 @@ async function loadClients() {
 async function addClient() {
     const form = document.getElementById('addClientForm');
     const formData = new FormData(form);
-    
+
     const clientData = {
         civilite: formData.get('civilite'),
         nom: formData.get('nom'),
@@ -67,7 +67,7 @@ async function addClient() {
 async function editClient(clientId) {
     const clients = await window.api.getClients();
     const client = clients.find(c => c.numClient === clientId);
-    
+
     if (client) {
         document.getElementById('editClientId').value = client.numClient;
         document.getElementById('editCivilite').value = client.civilite || 'M.';
@@ -77,7 +77,7 @@ async function editClient(clientId) {
         document.getElementById('editCodePostal').value = client.codePostal || '';
         document.getElementById('editVille').value = client.ville || '';
         document.getElementById('editPays').value = client.pays || 'France';
-        
+
         const modal = new bootstrap.Modal(document.getElementById('editClientModal'));
         modal.show();
     }
@@ -88,9 +88,9 @@ async function updateClient() {
     const clientId = document.getElementById('editClientId').value;
     const form = document.getElementById('editClientForm');
     const formData = new FormData(form);
-    
+
     const clientData = {
-        numClient: parseInt(clientId),
+        numClient: Number.parseInt(clientId, 10),
         civilite: formData.get('civilite'),
         nom: formData.get('nom'),
         prenom: formData.get('prenom'),

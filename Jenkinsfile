@@ -16,11 +16,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Adaptation pour Windows uniquement (on force agent-windows)
-                    bat """
-                        docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
-                        docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
-                    """
+                    // Adaptation pour Windows ou Linux
+                    if (isUnix()) {
+                        sh """
+                            docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+                            docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
+                        """
+                    } else {
+                        bat """
+                            docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+                            docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_IMAGE_NAME}:latest
+                        """
+                    }
                 }
             }
         }
@@ -28,17 +35,26 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: '0b645248-5ff1-4028-9402-f5c77efce425',  // ID existant
+                    credentialsId: 'docker-hub-credentials',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
                     script {
-                        bat """
-                            echo %PASS% | docker login -u %USER% --password-stdin
-                            docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
-                            docker push ${DOCKER_IMAGE_NAME}:latest
-                            docker logout
-                        """
+                        if (isUnix()) {
+                            sh """
+                                echo \$PASS | docker login -u \$USER --password-stdin
+                                docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE_NAME}:latest
+                                docker logout
+                            """
+                        } else {
+                            bat """
+                                echo %PASS% | docker login -u %USER% --password-stdin
+                                docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE_NAME}:latest
+                                docker logout
+                            """
+                        }
                     }
                 }
             }
